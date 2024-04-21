@@ -6,6 +6,20 @@ const Button = ({ handleClick, text }) => {
   )
 }
 
+// a proper place to define a component
+const Statistics = ({ good, neutral, bad, all }) => {
+  return (
+    <>
+      <div>good {good}</div>
+      <div>neutral {neutral}</div>
+      <div>bad {bad}</div>
+      <div>all {all}</div>
+      <div>average {(good - bad) / all}</div>
+      <div>positive {good / all * 100} %</div>
+    </>
+  )
+}
+
 const App = () => {
   // save clicks of each button to its own state
   const [good, setGood] = useState(0);
@@ -21,12 +35,7 @@ const App = () => {
       <Button handleClick={() => setNeutral(neutral + 1)} text="neutral"></Button>
       <Button handleClick={() => setBad(bad + 1)} text="bad"></Button>
       <h1>statistics</h1>
-      <div>good {good}</div>
-      <div>neutral {neutral}</div>
-      <div>bad {bad}</div>
-      <div>all {all}</div>
-      <div>average {(good - bad) / all}</div>
-      <div>positive {good / all * 100} %</div>
+      <Statistics good={good} neutral={neutral} bad={bad} all={all} />
     </div>
   )
 }
