@@ -24,14 +24,12 @@ const App = () => {
   const highestVote = () => {
     let max = votes[0];
     let loc = 0;
-
     for (let i = 0; i < votes.length; i++) {
       if (votes[i] > max) {
         max = votes[i];
         loc = i;
       }
     }
-
     return loc;
   }
 
