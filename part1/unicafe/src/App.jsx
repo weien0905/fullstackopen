@@ -8,15 +8,19 @@ const Button = ({ handleClick, text }) => {
 
 // a proper place to define a component
 const Statistics = ({ good, neutral, bad, all }) => {
+  if (all === 0) {
+    return <div>No feedback given</div>
+  }
+  
   return (
-    <>
+    <div>
       <div>good {good}</div>
       <div>neutral {neutral}</div>
       <div>bad {bad}</div>
       <div>all {all}</div>
       <div>average {(good - bad) / all}</div>
       <div>positive {good / all * 100} %</div>
-    </>
+    </div>
   )
 }
 
