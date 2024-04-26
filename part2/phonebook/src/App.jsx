@@ -8,8 +8,14 @@ const App = () => {
 
   const addName = e => {
     e.preventDefault();
-    setPersons([...persons, {name: newName}]);
-    setNewName('');
+    // Check if the name is already in the phonebook
+    if (persons.find(person => JSON.stringify(person) === JSON.stringify({name: newName}))) {
+      alert(`${newName} is already added to phonebook`);
+      setNewName('');
+    } else {
+      setPersons([...persons, {name: newName}]);
+      setNewName('');
+    }
   }
 
   const handleNameChange = e => {
