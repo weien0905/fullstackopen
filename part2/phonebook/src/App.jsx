@@ -20,9 +20,12 @@ const PersonForm = ({ addName, handleNameChange, handleNumberChange, newName, ne
   </form>
 </>
 
-const Persons = ({ filtered }) => <div>
+const Persons = ({ filtered, removePerson }) => <div>
       {filtered.map(person => 
-        <div key={person.id}>{person.name} {person.number}</div>
+        <div key={person.id}>
+          {person.name} {person.number}
+          <button data-id={person.id} onClick={removePerson}>Delete</button>
+        </div>
       )}
 </div>
 
@@ -78,6 +81,14 @@ const App = () => {
     setFilter(e.target.value);
   }
 
+  const removePerson = e => {
+    personService
+    .remove(e.target.dataset.id)
+    .then(data => 
+      setPersons(persons.filter(person => person.id !== data.id))
+    )
+  }
+
   const filtered = persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()));
 
   return (
@@ -87,7 +98,7 @@ const App = () => {
       <h3>add a new</h3>
       <PersonForm addName={addName} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} newName={newName} newNumber={newNumber} />
       <h3>Numbers</h3>
-      <Persons filtered={filtered} />
+      <Persons filtered={filtered} removePerson={removePerson} />
     </div>
   )
 }
