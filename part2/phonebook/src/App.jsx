@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import personService from './services/persons';
 
 const Filter = ({ handleFilterChange }) => <div>
   filter shown with <input onChange={handleFilterChange} />
@@ -32,10 +33,10 @@ const App = () => {
   const [filter, setFilter] = useState('');
 
   useEffect(() => {
-    axios
-    .get('http://localhost:3001/persons')
-    .then(res => {
-      setPersons(res.data);
+    personService
+    .getAll()
+    .then(data => {
+      setPersons(data);
     })
   }, [])
 
@@ -51,13 +52,13 @@ const App = () => {
       // Ensure no empty fields before submitting
       alert('All fields must be filled');
     } else {
-      axios
-      .post('http://localhost:3001/persons', {
+      personService
+      .create({
         name: newName,
         number: newNumber
       })
-      .then(res => {
-        setPersons([...persons, res.data]);
+      .then(data => {
+        setPersons([...persons, data]);
       });
 
       setNewName('');
