@@ -47,13 +47,24 @@ const App = () => {
     e.preventDefault();
     
     if (persons.find(person => person.name === newName)) {
-      // Check if the name is already in the phonebook
-      alert(`${newName} is already added to phonebook`);
-      setNewName('');
-      setNewNumber('');
-    } else if (!newName || !newNumber) {
-      // Ensure no empty fields before submitting
-      alert('All fields must be filled');
+      if (!newName || !newNumber) {
+        // Ensure no empty fields before submitting
+        alert('All fields must be filled');
+      } else if (confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+        // Check if the name is already in the phonebook
+        const duplicate = persons.filter(person => person.name === newName)[0]
+        
+        personService
+        .update(duplicate.id, { ...duplicate, number: newNumber })
+        .then(data => {
+          setPersons(persons.map(person => person.name !== newName ? person : data));
+          setNewName('');
+          setNewNumber('');
+        })
+      } else {
+        setNewName('');
+        setNewNumber('');
+      }
     } else {
       personService
       .create({
@@ -84,9 +95,9 @@ const App = () => {
   const removePerson = e => {
     personService
     .remove(e.target.dataset.id)
-    .then(data => 
+    .then(data => {
       setPersons(persons.filter(person => person.id !== data.id))
-    )
+    })
   }
 
   const filtered = persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()));
