@@ -51,7 +51,15 @@ const App = () => {
       // Ensure no empty fields before submitting
       alert('All fields must be filled');
     } else {
-      setPersons([...persons, {id: persons.length + 1 , name: newName, number: newNumber}]);
+      axios
+      .post('http://localhost:3001/persons', {
+        name: newName,
+        number: newNumber
+      })
+      .then(res => {
+        setPersons([...persons, res.data]);
+      });
+
       setNewName('');
       setNewNumber('');
     }
