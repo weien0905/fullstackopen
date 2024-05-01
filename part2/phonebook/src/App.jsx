@@ -24,16 +24,27 @@ const Persons = ({ filtered, removePerson }) => <div>
       {filtered.map(person => 
         <div key={person.id}>
           {person.name} {person.number}
-          <button data-id={person.id} onClick={removePerson}>Delete</button>
+          <button data-id={person.id} data-name={person.name} onClick={removePerson}>Delete</button>
         </div>
       )}
 </div>
+
+const Notification = ({ message }) => {
+  const messageStyle = {
+    color: message.color
+  }
+
+  return <div style={messageStyle} className='message'>
+    {message.text}
+  </div>
+}
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
   const [filter, setFilter] = useState('');
+  const [message, setMessage] = useState(null);
 
   useEffect(() => {
     personService
@@ -58,8 +69,16 @@ const App = () => {
         .update(duplicate.id, { ...duplicate, number: newNumber })
         .then(data => {
           setPersons(persons.map(person => person.name !== newName ? person : data));
+          
+          setMessage({
+            text: `Phone number for ${data.name} was updated`,
+            color: 'green'
+          })
           setNewName('');
           setNewNumber('');
+          setTimeout(() => {
+            setMessage(null)
+          }, 5000)
         })
       } else {
         setNewName('');
@@ -75,8 +94,15 @@ const App = () => {
         setPersons([...persons, data]);
       });
 
+      setMessage({
+        text: `Added ${newName}`,
+        color: 'green'
+      })
       setNewName('');
       setNewNumber('');
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
     }
   }
 
@@ -96,7 +122,17 @@ const App = () => {
     personService
     .remove(e.target.dataset.id)
     .then(data => {
-      setPersons(persons.filter(person => person.id !== data.id))
+      setPersons(persons.filter(person => person.id !== e.target.dataset.id))
+    })
+    .catch(err => {
+      setMessage({
+        text: `Information of ${e.target.dataset.name} has already been removed from server`,
+        color: 'red'
+      })
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
+      setPersons(persons.filter(person => person.id !== e.target.dataset.id))
     })
   }
 
@@ -105,6 +141,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      {message && <Notification message={message} />}
       <Filter handleFilterChange={handleFilterChange} />
       <h3>add a new</h3>
       <PersonForm addName={addName} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} newName={newName} newNumber={newNumber} />
